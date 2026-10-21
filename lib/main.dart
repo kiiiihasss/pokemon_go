@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pokdedex',
+      title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/home-page' : (context) => HomePage(),
+        '/home_page' : (context) => HomePage(), // route name
       },
     );
   }

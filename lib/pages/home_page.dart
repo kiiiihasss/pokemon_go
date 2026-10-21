@@ -15,20 +15,143 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Pokemon> pokemon = dataPokemon;
 
+  String _searchQuery = "";
+  bool _showFavoriteOnly = false;
+  final Set<String> _favoritePokemon = {};
+  final TextEditingController _searchcontroller = TextEditingController();
+
+  void _toggleFavorite(String name){
+    setState(() {
+      setState(() {
+        if(_favoritePokemon.contains(name)){
+          _favoritePokemon.remove(name);
+        }else{
+          _favoritePokemon.add(name);
+        }
+      });
+    });
+  }
+
+  Future<void> _openDetail(pokemon, bool isFavorite) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetailPage(
+          type: "",pokemon: pokemon,
+          isFavorite: isFavorite,
+        ),
+      ),
+    );
+
+    // ! + =
+    if(result != null){
+      setState(() {
+        if(result){
+          _favoritePokemon.add(pokemon.name);
+        }else{
+          _favoritePokemon.remove(pokemon.name);
+        }
+      });
+    }
+  }
+
+  bool isSwitch = false;
+
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size; // mengetahui resolusi layar device
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pokemon Go"),
+        title: Text(
+          "Pokémon GO",
+          style: TextStyle(
+            fontFamily: "Pokemon",
+            fontSize: 32,
+            color: Colors.amber,
+          ),
+        ),
         centerTitle: true,
-        leading: Icon(Icons.arrow_back_outlined),
-        actions: [Icon(Icons.favorite), SizedBox(width: 10)],
+        actions: [Icon(Icons.favorite_border_rounded), SizedBox(width: 15)],
       ),
-      body: ListView.builder(
-        itemCount: pokemon.length,
-        itemBuilder: (BuildContext context, int index){
-          return PokemonList(pokemon: pokemon[index]);
-        }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Search Pokemon",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                Switch(value: isSwitch, onChanged: (value){}),
+              ],
+            ),
+          ),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                //425 Mobile
+                //768 Tablet
+                //1024 Desktop
+                if (constraints.maxWidth <= 425) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) => PokemonList(
+                      pokemon: pokemon[index],
+                      isFavorite: true,
+                      onTap: () {
+                        _openDetail(pokemon[index], true);
+                      },
+                      onFavoriteTap: () {},
+                    ),
+                    itemCount: pokemon.length,
+                  );
+                } else if (constraints.maxWidth <= 768) {
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    itemBuilder: (context, index) {
+                      return PokemonCard(
+                        pokemon: pokemon[index],
+                        type: pokemon[index].type,
+                        isFavorite: true,
+                        onTap: () {
+                          _openDetail(pokemon[index], true);
+                        },
+                        onFavoriteTap: () {},
+                      );
+                    },
+                    itemCount: pokemon.length,
+                  );
+                } else {
+                  return GridView.builder(
+                    itemBuilder: (context, index) => PokemonCard(
+                      pokemon: pokemon[index],
+                      type: pokemon[index].type,
+                      isFavorite: true,
+                      onTap: () {
+                        _openDetail(pokemon[index], true);
+                      },
+                      onFavoriteTap: () {},
+                    ),
+                    itemCount: pokemon.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
