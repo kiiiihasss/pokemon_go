@@ -131,7 +131,7 @@ class _DetailPageState extends State<DetailPage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24,
                                 color: Colors.black,
-                                fontFamily: "Poppins",
+                                fontFamily: "Montserrat",
                               ),
                             ),
                             SizedBox(height: 15),
