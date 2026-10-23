@@ -34,8 +34,11 @@ class _HomePageState extends State<HomePage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            DetailPage(pokemon: pokemon, type: "", isFavorite: isFavorite),
+        builder: (_) => DetailPage(
+          pokemon: pokemon,
+          type: pokemon.type,
+          isFavorite: isFavorite,
+        ),
       ),
     );
     // ! + =
@@ -50,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  bool isSwitch = false;
+  bool isSwitch = false; // gak dipake sample aja
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +111,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                Switch(value: isSwitch, onChanged: (value) {}),
+                Switch(
+                  value: _showFavoriteOnly,
+                  onChanged: (value) {
+                    setState(() {
+                      _showFavoriteOnly = value;
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -134,6 +144,7 @@ class _HomePageState extends State<HomePage> {
                         onFavoriteTap: () {
                           _toggleFavorite(pokemon.name);
                         },
+                        type: pokemon.type,
                       );
                     },
                     itemCount: filtered.length,

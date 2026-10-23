@@ -5,6 +5,7 @@ import 'package:flutter_apps/pages/detail_page.dart';
 
 class PokemonList extends StatelessWidget {
   final Pokemon pokemon;
+  final String type;
 
   final bool isFavorite;
   final VoidCallback onTap;
@@ -16,40 +17,59 @@ class PokemonList extends StatelessWidget {
     required this.isFavorite,
     required this.onTap,
     required this.onFavoriteTap,
+    required this.type,
   });
+
+  Color _typeColor() {
+    if (type.contains('Water')) return Colors.blue;
+    if (type.contains('Poison')) return Colors.purple;
+    if (type.contains('Grass')) return Colors.green;
+    if (type.contains('Electric')) return Colors.amber;
+    if (type.contains('Dragon')) return Colors.indigo;
+    if (type.contains('Fire')) return Colors.red;
+    if (type.contains('Ice')) return Colors.teal;
+    if (type.contains('Normal')) return Colors.grey;
+    if (type.contains('Fighting')) return Colors.orange;
+    return Colors.amber;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Card(
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: Hero(
-                tag: 'pokemon-image',
-                child: Image.asset(
-                  pokemon.image,
-                  width: 56,
-                  height: 56,
-                  fit: BoxFit.cover,
-                ),
-              ),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(color: _typeColor(), width: 1),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        leading: Hero(
+          tag: pokemon.name,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.asset(
+              pokemon.image,
+              width: 67,
+              height: 67,
+              fit: BoxFit.cover,
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(pokemon.name),
-                  ],
-                ),
-              ),
-            ),
-            Icon(Icons.favorite_border_rounded)
-          ],
+          ),
+        ),
+        title: Text(
+          pokemon.name,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        subtitle: TypeChip(type: type),
+        trailing: IconButton(
+          onPressed: onFavoriteTap,
+          icon: isFavorite
+              ? Icon(Icons.favorite)
+              : Icon(Icons.favorite_border_outlined),
+          color: isFavorite ? Colors.pink : Colors.grey,
         ),
       ),
     );
